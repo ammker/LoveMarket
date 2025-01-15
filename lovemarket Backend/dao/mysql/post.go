@@ -148,14 +148,14 @@ func GetPostByselfList(page, size, userid int64) (posts []*models.Post, err erro
 }
 func GetPostList2(page, size int64) (posts []*models.Post, err error) {
 	sqlStr := `select 
-	postid, title,summary, content, userid, communityid, CreateTime,VoteCount
+	postid, title, summary, content, userid, communityid, CreateTime, VoteCount
 	from posts
 	WHERE status = 1
-	ORDER BY VoteCount
-	DESC
+	AND CreateTime >= NOW() - INTERVAL 7 DAY
+	ORDER BY VoteCount DESC
 	limit ?,?
 	`
-	posts = make([]*models.Post, 0, 2) // 不要写成make([]*models.Post, 2)
+	posts = make([]*models.Post, 0, size) // 使用 size 作为容量
 	err = db.Select(&posts, sqlStr, (page-1)*size, size)
 	return
 }

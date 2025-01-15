@@ -4,14 +4,16 @@
         :modules="modules"
         :slides-per-view="1" 
         navigation
-        :autoplay="{ delay: 3000, disableOnInteraction: false }"
+        :autoplay="{ delay: 1500, disableOnInteraction: false }"
         :pagination="{ clickable: true }"
         @swiper="onSwiper"
         @slideChange="onSlideChange"
     >
-        <swiper-slide><img src="../assets/11.webp" alt=""></swiper-slide>
-        <swiper-slide><img src="../assets/641.webp" alt=""></swiper-slide>
-        <swiper-slide><img src="../assets/123.jpg" alt=""></swiper-slide>
+        <swiper-slide><img src="../assets/1.png" alt=""></swiper-slide>
+        <swiper-slide><img src="../assets/2.png" alt=""></swiper-slide>
+        <swiper-slide><img src="../assets/3.png" alt=""></swiper-slide>
+        <swiper-slide><img src="../assets/4.png" alt=""></swiper-slide>
+        <swiper-slide><img src="../assets/5.png" alt=""></swiper-slide>
     </swiper>
 </template>
   

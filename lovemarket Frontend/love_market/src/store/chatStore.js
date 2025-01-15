@@ -10,12 +10,12 @@ export const useChatStore = defineStore('chat', {
     users: [], // 从后端获取
     messages: [], // 从后端获取
     activeFriendId: null, // 当前选中的好友 ID
-    currentUserId: null // 当前好友 ID
+    currentUserId: JSON.parse(localStorage.getItem("user")).userid// 当前用户 ID
   }),
   getters: {
     // 获取当前选中的好友信息
     activeFriend: (state) => state.users.find(user => user.id === state.activeFriendId),
-    // 获取当前好友的聊天记录
+    // 获取当前用户的聊天记录
     activeMessages: (state) =>
       state.messages.filter(
         (msg) =>
@@ -24,7 +24,6 @@ export const useChatStore = defineStore('chat', {
       )
   },
   actions: {
-    //从后端获取个人信息
     async fetchMe() {
       try {
         console.log("Getting...")
@@ -46,11 +45,11 @@ export const useChatStore = defineStore('chat', {
         console.error('错误详情:', error.response ? error.response.data : error.message);
       }
     },
-    // 从后端获取好友列表
+    // 从后端获取用户列表
     async fetchUsers() {
       try {
         axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
-        const response = await axios.get(`${baseURL}/api/v1/message/getfriends`);//这里还要根据当前用户获取消息
+        const response = await axios.get(`${baseURL}/api/v1/message/getfriends`);
         
         // 根据后端返回的格式，提取 "data" 字段
         if (response.data.code === 200) {
@@ -59,16 +58,17 @@ export const useChatStore = defineStore('chat', {
             name: user.name,
             avatar: user.avatar
           }));
-          console.log('好友列表获取成功:', this.users);
+          console.log('用户列表获取成功:', this.users);
         } else {
-          console.error('获取好友列表失败，后端返回错误:', response.data.message);
+          console.error('获取用户列表失败，后端返回错误:', response.data.message);
         }
       } catch (error) {
-        console.error('获取好友列表失败:', error);
+        console.error('获取用户列表失败:', error);
         console.error('请求 URL:', error.config?.url || '');
         console.error('错误详情:', error.response ? error.response.data : error.message);
       }
-    },
+    }
+  ,
 
     // 从后端获取消息列表
     async fetchMessages() {
@@ -134,11 +134,11 @@ export const useChatStore = defineStore('chat', {
         if (response.data && response.data.code === 200) {
           // 将返回的新消息添加到本地状态
           this.messages.push({
-            id: response.data.message.mid,
-            sender_id: this.currentUserId,
-            receiver_id: requestData.rev_user_id,
-            text: requestData.content,
-            timestamp: response.data.message.create_time,
+            mid: response.data.message.mid,
+            send_user_id: this.currentUserId,
+            rev_user_id: requestData.rev_user_id,
+            content: requestData.content,
+            create_time: response.data.message.create_time,
           });
         } else {
           console.error('后端返回错误:', response.data);
@@ -148,13 +148,21 @@ export const useChatStore = defineStore('chat', {
         console.error('请求 URL:', error.config.url);
         console.error('错误详情:', error.response ? error.response.data : error.message);
       }
-      axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
       await this.fetchMessages();
       console.log('Message sent and messages list updated.');
     },
 
-
-
+    // 撤回消息
+    revokeMessage(messageId) {
+      try {
+         axios.delete(``,messageId)//待填URL
+        this.messages = this.messages.filter(msg => msg.id !== messageId) // 从本地状态中移除消息
+      } catch (error) {
+        console.error('撤回消息失败:', error)
+        console.error('请求 URL:', error.config.url)
+        console.error('错误详情:', error.response ? error.response.data : error.message)
+      }
+    },
     // 设置当前用户
     setCurrentUser(userId) {
       this.currentUserId = userId

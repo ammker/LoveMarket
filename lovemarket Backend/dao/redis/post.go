@@ -54,36 +54,3 @@ func GetPostVoteData(ids []string) (data []int64, err error) {
 	}
 	return
 }
-
-//// GetCommunityPostIDsInOrder 按社区查询ids
-//func GetCommunityPostIDsInOrder(p *models.ParamPostList) ([]string, error) {
-//
-//	orderKey := getRedisKey(KeyPostTimeZSet)
-//	if p.Order == models.OrderScore {
-//		orderKey = getRedisKey(KeyPostScoreZSet)
-//	}
-//
-//	// 使用 zinterstore 把分区的帖子set与帖子分数的 zset 生成一个新的zset
-//	// 针对新的zset 按之前的逻辑取数据
-//
-//	// 社区的key
-//	cKey := getRedisKey(KeyCommunitySetPF + strconv.Itoa(int(p.CommunityID)))
-//
-//	// 利用缓存key减少zinterstore执行的次数
-//	key := orderKey + strconv.Itoa(int(p.CommunityID))
-//	if client.Exists(context.Background(), key).Val() < 1 {
-//		// 不存在，需要计算
-//		pipeline := client.Pipeline()
-//		pipeline.ZInterStore(context.Background(), key, &redis.ZStore{
-//			Keys:      []string{cKey, orderKey},
-//			Aggregate: "MAX",
-//		}) // zinterstore 计算
-//		pipeline.Expire(context.Background(), key, 60*time.Second) // 设置超时时间
-//		_, err := pipeline.Exec(context.Background())
-//		if err != nil {
-//			return nil, err
-//		}
-//	}
-//	// 存在的话就直接根据key查询ids
-//	return getIDsFormKey(key, p.Page, p.Size)
-//}

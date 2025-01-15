@@ -16,6 +16,8 @@
         <div class="author_name">{{ author_name }}</div>
         <div class="time">{{ formatTime(create_time) }}</div>
       </div>
+
+      <div class= "community-label">{{ community_name }}</div>
     </div>
   </template>
   
@@ -48,6 +50,10 @@
         required: true,
       },
       summary: {
+        type: String,
+        required: true,
+      },
+      community_name:{
         type: String,
         required: true,
       }
@@ -85,6 +91,19 @@
     box-sizing: border-box;
     min-height: 180px;
     gap: 10px; /* 子项之间的间距 */
+  }
+
+  /* 左下角：分区标签 */
+    .community-label {
+    position: absolute; /* 定位到左下角 */
+    bottom: 10px;       /* 距离底部的距离 */
+    left: 15px;         /* 距离左侧的距离 */
+    font-size: 14px;    /* 字体大小 */
+    color: #ec8aae;     /* 分区标签颜色 */
+    font-weight: bold;  /* 加粗 */
+    background-color: #eef5ff; /* 背景色 */
+    padding: 5px 10px;  /* 内边距 */
+    border-radius: 13px; /* 圆角 */
   }
   
   /* 左上角：回顾数量 */

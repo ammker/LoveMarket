@@ -11,6 +11,7 @@
         :create_time="post.create_time"
         :id="post.id"
         :summary="post.summary"
+        :community_name="post.community.name"
     />
     <!-- 提示加载 -->
     <div v-if="posts.length != 0 && isLoading" class="loading">{{ mes }}</div>

@@ -18,8 +18,8 @@ func GetCommunityList() (communityList []*models.Community, err error) {
 	return
 }
 func GetCommentListByPostID(pid int64) (commentList []*models.Comment, err error) {
-	// 定义 SQL 查询语句
-	sqlStr := "SELECT pid, userid,username,content, createtime FROM comment WHERE pid = ?"
+	// 定义 SQL 查询语句，按时间从新到老排序
+	sqlStr := "SELECT pid, userid, username, content, createtime FROM comment WHERE pid = ? ORDER BY createtime DESC"
 
 	// 执行查询并绑定结果到 commentList
 	err = db.Select(&commentList, sqlStr, pid)

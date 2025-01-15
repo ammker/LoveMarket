@@ -52,7 +52,9 @@
         name: 'App',
 
         methods: {
-
+            mouted(){
+                chatStore.initData()
+            },
             handleLogin() {
                 if (!this.username || !this.password) {
                     alert('请输入完整的登录信息');
@@ -81,7 +83,7 @@
                       this.chatStore.setCurrentUser(response.data.data.userid)
                       this.chatStore.fetchMe()
                       this.chatStore.fetchUsers()
-                      this.chatStore.fetchMessages()
+                      this.chatStore.fetchMessages() 
                       this.$router.push('/home'); // 跳转到首页或其他页面
                     } 
                     else {

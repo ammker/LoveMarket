@@ -17,6 +17,15 @@
             {{ message.text }}
             <div class="timestamp">{{ message.timestamp }}</div>
           </div>
+          <!-- 图片消息 -->
+          <div v-if="message.imageUrl" class="message-content">
+            <img
+              :src="message.imageUrl"
+              alt="图片"
+              class="chat-image"
+              @dblclick="openImageModal(message.imageUrl)"
+            />
+            <div class="timestamp">{{ message.timestamp }}</div>
           </div>
         </div>
       </div>
@@ -38,6 +47,16 @@
           {{ emoji }}
         </span>
       </div>
+
+
+      <!-- 隐藏的文件输入 -->
+      <input
+        type="file"
+        ref="fileInput"
+        style="display: none"
+        accept="image/*"
+        @change="handleImageUpload"
+      />
       <!-- 文本输入框 -->
       <textarea
         v-model="newMessage"
@@ -50,10 +69,12 @@
       <button @click="sendMessage">发送</button>
     </div>
 
+
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch,onUpdated } from 'vue' // 移除 onUpdated
+import { ref, onMounted, watch } from 'vue' // 移除 onUpdated
 import { useChatStore } from '../store/chatStore'
 import { useRoute } from 'vue-router'
 
@@ -62,24 +83,28 @@ const route = useRoute()
 
 const newMessage = ref('')
 const chatMessages = ref(null)
+const fileInput = ref(null)
+const isImageModalOpen = ref(false)
+const selectedImageUrl = ref('')
 const showEmojiPicker = ref(false)
 const textarea = ref(null)
 
 
 
 // 初始化时获取用户列表和消息列表
-onMounted(async () => {
+onMounted(() => {
+
+  chatStore.fetchMe()
+  chatStore.fetchUsers()
   chatStore.fetchMessages()
-  console.log('Getted'+chatStore.messages)
+  console.log("True Messages:"+chatStore.messages)
+  console.log("True Messages:"+chatStore.activeMessages)
   scrollToBottom() // 发送消息后滚动到底部
 })
 
 
-
-
-
 // 发送消息
-const sendMessage = async () => {
+const sendMessage =  () => {
   if (newMessage.value.trim() !== '') {
     const message = {
       sender_id: chatStore.currentUserId,
@@ -118,7 +143,7 @@ const getAvatar = (userId) => {
   }
   else {
     const user = chatStore.users.find((user) => user.id === userId)
-    console.log(user.avatar)
+    
     return user ? user.avatar : ''
   }
   
@@ -153,8 +178,42 @@ const scrollToBottom = () => {
     chatMessages.value.scrollTop = chatMessages.value.scrollHeight
   }
 }
+const triggerImageUpload = () => {
+  fileInput.value.click()
+}
 
+// 处理图片上传
+const handleImageUpload = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      const imageUrl = e.target.result
+      const message = {
+        sender_id: chatStore.currentUserId,
+        receiver_id: chatStore.activeFriendId,
+        text: null,
+        image_url: imageUrl // 如果是图片消息，这里替换为图片 URL
+      }
+      chatStore.sendMessage(message)   
+      
+    }
+    scrollToBottom() // 发送图片后滚动到底部
+    reader.readAsDataURL(file)
+  }
+}
+// 打开图片预览模态框
+const openImageModal = (imageUrl) => {
+  selectedImageUrl.value = imageUrl
+  isImageModalOpen.value = true
+}
 
+// 关闭图片预览模态框
+const closeImageModal = () => {
+  isImageModalOpen.value = false
+  selectedImageUrl.value = ''
+}
 
 // 切换表情选择器
 const toggleEmojiPicker = () => {
@@ -184,20 +243,20 @@ const insertEmoji = (emoji) => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh; /* 确保聊天界面占满整个视口高度 */
+  height: 90vh; /* 确保聊天界面占满整个视口高度 */
   box-sizing: border-box;
   background-color: #fff5f8; /* 粉色背景 */
 }
 
 .chat-header {
-  background-color: #ff69b4; /* 粉色主题色 */
+  background-color: #f0a7c2; /* 粉色主题色 */
   color: white;
   padding: 10px;
   text-align: center;
   font-size: 18px;
   font-weight: bold;
   border-radius: 10px;
-  border-bottom: 1px solid #ff1493; /* 深粉色边框 */
+  border-bottom: 1px solid #f0a7c2; /* 深粉色边框 */
 }
 
 .chat-messages {
@@ -237,7 +296,7 @@ const insertEmoji = (emoji) => {
 }
 
 .message-bubble.me {
-  background-color: #ff69b4; /* 粉色主题色 */
+  background-color: #f0a7c2; /* 粉色主题色 */
   color: white;
   margin-left: 10px;
 }
@@ -269,7 +328,14 @@ const insertEmoji = (emoji) => {
   object-fit: cover;
 }
 
-
+.chat-image {
+  max-width: 200px; /* 限制图片的最大宽度 */
+  max-height: 200px; /* 限制图片的最大高度 */
+  border-radius: 8px;
+  margin-top: 5px;
+  cursor: pointer;
+  object-fit: cover; /* 保持图片比例 */
+}
 
 .chat-input {
   display: flex;
@@ -295,7 +361,7 @@ const insertEmoji = (emoji) => {
 
 .chat-input button {
   padding: 10px 20px;
-  background-color: #ff69b4; /* 粉色主题色 */
+  background-color: #f0a7c2; /* 粉色主题色 */
   color: white;
   border: none;
   border-radius: 5px;

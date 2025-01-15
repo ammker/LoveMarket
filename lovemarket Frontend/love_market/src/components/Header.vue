@@ -31,18 +31,24 @@
 </template>
   
 <script>
-    // import {useChatStore} from '@/store/chatStore'
+    import {useChatStore} from '@/store/chatStore'
     export default {
        
         data() {
             return {
                 searchQuery: '',
-                // chatStore:useChatStore()
+                
             }
         },
         methods: {
             goTosearch() {
-                this.$router.push({ name: 'search',  params: { searchdetail: this.searchQuery }});
+                if(this.searchQuery){
+                    this.$router.push({ name: 'search',  params: { searchdetail: this.searchQuery }});
+                }
+                else{
+                    alert("输入不可为空!")
+                }
+                
             },
             // 跳转到主页
             goToHome() {
@@ -59,9 +65,7 @@
                 this.$router.push({ name: 'ProfilePage'});
             },
             goToChat(){
-                // if(!chatStore.me){
-                //     alert()
-                // }
+                
                 this.$router.push({ name: 'chat', parmas:{friendId:0}});
             },
             goToMyposts(){
@@ -152,6 +156,7 @@
     .user-profile a {
         color: white;
         text-decoration: none;
+        cursor: pointer;
     }
     
     .user-profile a:hover {

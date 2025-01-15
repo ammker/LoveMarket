@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted,onUpdated } from 'vue'
 import { useChatStore } from '../store/chatStore'
 import Header from '@/components/Header.vue';
 
@@ -34,13 +34,14 @@ onMounted(async () => {
   chatStore.fetchMe()
   chatStore.fetchUsers()
 })
-</script>
 
+</script>
+vh
 <style scoped>
 .chat-layout {
   display: flex;
   flex-direction: row; /* 恢复为水平排列 */
-  height: 100vh;
+  height: 95vh;
   box-sizing: border-box;
   background-color: #fff5f8; /* 粉色背景 */
 }
@@ -63,7 +64,7 @@ onMounted(async () => {
 }
 
 .friend-item.active {
-  background-color: #ff69b4; /* 粉色主题色 */
+  background-color: #f0a7c2; /* 粉色主题色 */
   color: white;
 }
 

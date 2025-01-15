@@ -76,9 +76,11 @@
                 postContent: "", // 正文内容
                 // 固定类别列表，每个类别有对应的 id 和名称
                 communities: [
-                { id: 1, name: "恋爱" },
-                { id: 2, name: "校园" },
-                { id: 3, name: "集市" },
+                { id: 1, name: "外出组队" },
+                { id: 2, name: "恋爱交友" },
+                { id: 3, name: "疑惑求助" },
+                { id: 4, name: "兴趣分享" },
+                { id: 5, name: "技能交换" },
                 ],
                 selectedCommunity: null, // 存储选中的类别对象
                 dropdownOpen: false, // 控制下拉框是否显示
